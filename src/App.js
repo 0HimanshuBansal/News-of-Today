@@ -10,16 +10,17 @@ import {
 } from "react-router-dom";
 
 export default class App extends Component {
+  api = "87c2af5eef974645a5eefd0278ad8a0e";
   render() {
     return (
       <Router>
         <Navbar />
         <Switch>
-          <Route key="general" exact path="/"><NewsContainer pageSize={15} country="in" category="general" /></Route>
-          <Route key="science" exact path="/science"><NewsContainer pageSize={15} country="in" category="science" /></Route>
-          <Route key="business" exact path="/business"><NewsContainer pageSize={15} country="in" category="business" /></Route>
-          <Route key="technology" exact path="/technology"><NewsContainer pageSize={15} country="in" category="technology" /></Route>
-          <Route key="entertainment" exact path="/entertainment"><NewsContainer pageSize={15} country="in" category="entertainment" /></Route>
+          <Route key="general" exact path="/"><NewsContainer pageSize={15} country="in" category="general" api={this.api}/></Route>
+          <Route key="science" exact path="/science"><NewsContainer pageSize={15} country="in" category="science" api={this.api}/></Route>
+          <Route key="business" exact path="/business"><NewsContainer pageSize={15} country="in" category="business" api={this.api}/></Route>
+          <Route key="technology" exact path="/technology"><NewsContainer pageSize={15} country="in" category="technology" api={this.api}/></Route>
+          <Route key="entertainment" exact path="/entertainment"><NewsContainer pageSize={15} country="in" category="entertainment" api={this.api}/></Route>
         </Switch>
       </Router>
     )

@@ -6,7 +6,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 export default class NewsContainer extends Component {
     async componentDidMount() {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=87c2af5eef974645a5eefd0278ad8a0e&page=1&pageSize=${this.props.pageSize}`;
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.api}&page=1&pageSize=${this.props.pageSize}`;
         this.setState({ loading: true });
         let data = await fetch(url);
         let parsedData = await data.json();
@@ -17,14 +17,20 @@ export default class NewsContainer extends Component {
         })
     }
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             articles: [],
             loading: true,
             page: 1,
             totalResults: 0
         }
+        document.title = this.sentenceCase() + " - News of Today"
+    }
+
+    sentenceCase = () => {
+        let str = this.props.category;
+        return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
     fetchMoreData = async () => {
@@ -32,7 +38,7 @@ export default class NewsContainer extends Component {
             page: this.state.page + 1,
             loading: true
         })
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=87c2af5eef974645a5eefd0278ad8a0e&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.api}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
         let data = await fetch(url);
         let parsedData = await data.json();
         this.setState({
@@ -48,12 +54,12 @@ export default class NewsContainer extends Component {
             <>
                 {this.state.loading && <Loading />}
                 <div className="container my-3">
-                    <h2 id="heading">News of Today - Top Headlines</h2>
+                    <h2 id="heading">{`News of Today - Top ${this.sentenceCase()} Headlines`}</h2>
                     <InfiniteScroll
                         dataLength={this.state.articles.length}
                         next={this.fetchMoreData}
                         hasMore={this.state.articles.length !== this.state.totalResults}
-                        loader={<span></span>}
+                        // loader={<h2>Loading...</h2>}
                     >
                         <div className="container">
                             <div className="row my-3">
