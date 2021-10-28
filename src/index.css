@@ -10,7 +10,17 @@
 } */
 
 #heading{
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+#heading h2{
     text-align: center;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    width: fit-content;
 }
 
 .news-card{

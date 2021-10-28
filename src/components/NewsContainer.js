@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import NewsItem from './NewsItem';
 import Loading from './Loading';
+import NewsItem from './NewsItem';
+import React, { Component } from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
 
 
@@ -53,8 +53,8 @@ export default class NewsContainer extends Component {
         return (
             <>
                 {this.state.loading && <Loading />}
-                <div className="container my-3">
-                    <h2 id="heading">{`News of Today - Top ${this.sentenceCase()} Headlines`}</h2>
+                <div className="container">
+                    <div id="heading"><h2>{`News of Today - Top ${this.sentenceCase()} Headlines`}</h2></div>
                     <InfiniteScroll
                         dataLength={this.state.articles.length}
                         next={this.fetchMoreData}
@@ -62,7 +62,7 @@ export default class NewsContainer extends Component {
                         // loader={<h2>Loading...</h2>}
                     >
                         <div className="container">
-                            <div className="row my-3">
+                            <div className="row">
                                 {this.state.articles.map((element) => {
                                     return <div className="col-md-4 my-3" key={element.url}>
                                         <NewsItem title={element.title} description={element.description} author={element.author} datePublished={element.publishedAt} imageUrl={element.urlToImage} url={element.url} category={this.props.category} />
