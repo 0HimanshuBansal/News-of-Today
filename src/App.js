@@ -10,7 +10,8 @@ import {
 } from "react-router-dom";
 
 export default class App extends Component {
-  api = "87c2af5eef974645a5eefd0278ad8a0e";
+  api = process.env.REACT_APP_NEWS_API;
+
   render() {
     return (
       <Router>
