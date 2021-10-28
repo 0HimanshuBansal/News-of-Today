@@ -1,78 +1,64 @@
 import Loading from './Loading';
 import NewsItem from './NewsItem';
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
 
 
-export default class NewsContainer extends Component {
-    async componentDidMount() {
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.api}&page=1&pageSize=${this.props.pageSize}`;
-        this.setState({ loading: true });
+export default function NewsContainer(props) {
+    const [articles, setArticles] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [page, setPage] = useState(1)
+    const [totalResults, setTotalResults] = useState(0)
+    // document.title = sentenceCase() + " - News of Today"
+
+    useEffect(() => {
+        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=1&pageSize=${props.pageSize}`;
+        setLoading(true);
         let data = await fetch(url);
         let parsedData = await data.json();
-        this.setState({
-            articles: parsedData.articles,
-            totalResults: parsedData.totalResults,
-            loading: false
-        })
-    }
+        setArticles(parsedData.articles);
+        setLoading(false);
+        setTotalResults(parsedData.totalResults)
+    }, [])
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            articles: [],
-            loading: true,
-            page: 1,
-            totalResults: 0
-        }
-        document.title = this.sentenceCase() + " - News of Today"
-    }
-
-    sentenceCase = () => {
-        let str = this.props.category;
+    const sentenceCase = () => {
+        let str = props.category;
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    fetchMoreData = async () => {
-        this.setState({
-            page: this.state.page + 1,
-            loading: true
-        })
-        let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.api}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    const fetchMoreData = async () => {
+        setPage(page + 1)
+        setLoading(true);
+        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=${page}&pageSize=${props.pageSize}`;
         let data = await fetch(url);
         let parsedData = await data.json();
-        this.setState({
-            articles: this.state.articles.concat(parsedData.articles),
-            loading: false,
-            totalResults: parsedData.totalResults
-        })
+        setArticles(state.articles.concat(parsedData.articles));
+        setLoading(false);
+        setTotalResults(parsedData.totalResults)
     };
 
-
-    render() {
-        return (
-            <>
-                {this.state.loading && <Loading />}
-                <div className="container">
-                    <div id="heading"><h2>{`News of Today - Top ${this.sentenceCase()} Headlines`}</h2></div>
-                    <InfiniteScroll
-                        dataLength={this.state.articles.length}
-                        next={this.fetchMoreData}
-                        hasMore={this.state.articles.length !== this.state.totalResults}
-                        // loader={<h2>Loading...</h2>}
-                    >
-                        <div className="container">
-                            <div className="row">
-                                {this.state.articles.map((element) => {
-                                    return <div className="col-md-4 my-3" key={element.url}>
-                                        <NewsItem title={element.title} description={element.description} author={element.author} datePublished={element.publishedAt} imageUrl={element.urlToImage} url={element.url} category={this.props.category} />
-                                    </div>
-                                })}
-                            </div>
+    return (
+        <>
+            {loading && <Loading />}
+            <div className="container">
+                <div id="heading"><h2>{`News of Today - Top ${sentenceCase()} Headlines`}</h2></div>
+                <InfiniteScroll
+                    dataLength={articles.length}
+                    next={fetchMoreData}
+                    hasMore={articles.length !== totalResults}
+                // loader={<h2>Loading...</h2>}
+                >
+                    <div className="container">
+                        <div className="row">
+                            {articles.map((element) => {
+                                return <div className="col-md-4 my-3" key={element.url}>
+                                    <NewsItem title={element.title} description={element.description} author={element.author} datePublished={element.publishedAt} imageUrl={element.urlToImage} url={element.url} category={props.category} />
+                                </div>
+                            })}
                         </div>
-                    </InfiniteScroll>
-                </div>
-            </>
-        )
-    }
+                    </div>
+                </InfiniteScroll>
+            </div>
+        </>
+    )
 }
