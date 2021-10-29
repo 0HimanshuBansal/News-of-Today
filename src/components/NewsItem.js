@@ -1,7 +1,7 @@
 import React from 'react'
 
-export default function NewsItem() {
-    let { title, description, author, datePublished, imageUrl, url, category } = this.props
+export default function NewsItem(props) {
+    let { title, description, author, datePublished, imageUrl, url, category } = props
     return (
         <div id="newsItem" className="card">
             <img id="newsImage" src={(imageUrl === null) ? `https://source.unsplash.com/1600x900/?${category}` : imageUrl} className="card-img-top" alt="..." />

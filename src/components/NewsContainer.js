@@ -9,16 +9,10 @@ export default function NewsContainer(props) {
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [totalResults, setTotalResults] = useState(0)
-    // document.title = sentenceCase() + " - News of Today"
 
-    useEffect(() => {
-        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=1&pageSize=${props.pageSize}`;
-        setLoading(true);
-        let data = await fetch(url);
-        let parsedData = await data.json();
-        setArticles(parsedData.articles);
-        setLoading(false);
-        setTotalResults(parsedData.totalResults)
+    useEffect( async() => {
+        document.title = sentenceCase() + " - News of Today";
+        fun();
     }, [])
 
     const sentenceCase = () => {
@@ -26,13 +20,29 @@ export default function NewsContainer(props) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    const fetchMoreData = async () => {
-        setPage(page + 1)
+    const fun = async () => {
         setLoading(true);
-        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=${page}&pageSize=${props.pageSize}`;
+
+        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=1&pageSize=${props.pageSize}`;
         let data = await fetch(url);
         let parsedData = await data.json();
-        setArticles(state.articles.concat(parsedData.articles));
+
+        setArticles(parsedData.articles);
+        setLoading(false);
+        setTotalResults(parsedData.totalResults);
+    }
+
+    const fetchMoreData = async () => {
+        setLoading(true);
+        // setPage(page + 1); as this is not asynchronous and it also takes time, which leads to not updating 
+                            // variable in time, hence we see duplicate data, because of same url,["page" here]
+
+        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=${page + 1}&pageSize=${props.pageSize}`;
+        let data = await fetch(url);
+        let parsedData = await data.json();
+
+        setPage(page + 1);
+        setArticles(articles.concat(parsedData.articles));
         setLoading(false);
         setTotalResults(parsedData.totalResults)
     };
