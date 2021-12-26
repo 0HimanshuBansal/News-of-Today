@@ -3,16 +3,15 @@ import NewsItem from './NewsItem';
 import React, { useState, useEffect } from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
 
-
 export default function NewsContainer(props) {
     const [articles, setArticles] = useState([])
     const [loading, setLoading] = useState(true)
     const [page, setPage] = useState(1)
     const [totalResults, setTotalResults] = useState(0)
 
-    useEffect( async() => {
+    useEffect(() => {
         document.title = sentenceCase() + " - News of Today";
-        fun();
+        fetchData();
     }, [])
 
     const sentenceCase = () => {
@@ -20,33 +19,43 @@ export default function NewsContainer(props) {
         return str.charAt(0).toUpperCase() + str.slice(1);
     }
 
-    const fun = async () => {
+    const fetchData = async () => {
         setLoading(true);
-
-        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=1&pageSize=${props.pageSize}`;
-        let data = await fetch(url);
-        let parsedData = await data.json();
+        const newsCatcher = `https://api.newscatcherapi.com/v2/latest_headlines?countries=${props.country}&topic=${props.category}&page=1&page_size=${props.pageSize}&lang=en`
+        const url = newsCatcher;
+        const data = await fetch(url, {
+            "headers": {
+                "x-api-key": props.api
+            }
+        });
+        const parsedData = await data.json();
 
         setArticles(parsedData.articles);
         setLoading(false);
-        setTotalResults(parsedData.totalResults);
+        setTotalResults(parsedData.total_pages)
     }
 
     const fetchMoreData = async () => {
         setLoading(true);
-        // setPage(page + 1); as this is not asynchronous and it also takes time, which leads to not updating 
-                            // variable in time, hence we see duplicate data, because of same url,["page" here]
+        const newsCatcher = `https://api.newscatcherapi.com/v2/latest_headlines?countries=${props.country}&topic=${props.category}&page=${page + 1}&page_size=${props.pageSize}&lang=en`
 
-        let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.api}&page=${page + 1}&pageSize=${props.pageSize}`;
-        let data = await fetch(url);
-        let parsedData = await data.json();
-
+        const url = newsCatcher;
+        const data = await fetch(url, {
+            "headers": {
+                "x-api-key": props.api
+            }
+        });
+        const parsedData = await data.json();
         setPage(page + 1);
         setArticles(articles.concat(parsedData.articles));
         setLoading(false);
-        setTotalResults(parsedData.totalResults)
+        setTotalResults(parsedData.total_pages)
     };
 
+    const randomTitleSubstring = (title) => {
+        const titleArray = title.split(' ');
+        return titleArray[4];
+    }
     return (
         <>
             {loading && <Loading />}
@@ -56,13 +65,12 @@ export default function NewsContainer(props) {
                     dataLength={articles.length}
                     next={fetchMoreData}
                     hasMore={articles.length !== totalResults}
-                // loader={<h2>Loading...</h2>}
                 >
                     <div className="container">
                         <div className="row">
-                            {articles.map((element) => {
-                                return <div className="col-md-4 my-3" key={element.url}>
-                                    <NewsItem title={element.title} description={element.description} author={element.author} datePublished={element.publishedAt} imageUrl={element.urlToImage} url={element.url} category={props.category} />
+                            {articles.map((element, i) => {
+                                return <div className="col-md-4 my-3" key={i}>
+                                    <NewsItem key={element.url} title={element.title} description={element.excerpt} author={element.author} datePublished={element.published_date} imageUrl={element.media} url={element.link} category={props.category} nullImage={`${randomTitleSubstring(element.title)}`} />
                                 </div>
                             })}
                         </div>

@@ -1,5 +1,3 @@
-import './App.css';
-
 import React, { Component } from 'react'
 import Navbar from './components/Navbar';
 import NewsContainer from './components/NewsContainer';
@@ -17,10 +15,10 @@ export default class App extends Component {
       <Router>
         <Navbar />
         <Switch>
-          <Route key="general" exact path="/"><NewsContainer pageSize={15} country="in" category="general" api={this.api}/></Route>
+          <Route key="general" exact path="/"><NewsContainer pageSize={15} country="in" category="news" api={this.api}/></Route>
           <Route key="science" exact path="/science"><NewsContainer pageSize={15} country="in" category="science" api={this.api}/></Route>
           <Route key="business" exact path="/business"><NewsContainer pageSize={15} country="in" category="business" api={this.api}/></Route>
-          <Route key="technology" exact path="/technology"><NewsContainer pageSize={15} country="in" category="technology" api={this.api}/></Route>
+          <Route key="technology" exact path="/technology"><NewsContainer pageSize={15} country="in" category="tech" api={this.api}/></Route>
           <Route key="entertainment" exact path="/entertainment"><NewsContainer pageSize={15} country="in" category="entertainment" api={this.api}/></Route>
         </Switch>
       </Router>

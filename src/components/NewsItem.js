@@ -1,10 +1,10 @@
 import React from 'react'
 
 export default function NewsItem(props) {
-    let { title, description, author, datePublished, imageUrl, url, category } = props
+    let { title, description, author, datePublished, imageUrl, url, category, nullImage } = props
     return (
         <div id="newsItem" className="card">
-            <img id="newsImage" src={(imageUrl === null) ? `https://source.unsplash.com/1600x900/?${category}` : imageUrl} className="card-img-top" alt="..." />
+            <img id="newsImage" src={(imageUrl === null) ? `https://source.unsplash.com/1600x900/?${category},${nullImage}` : imageUrl} className="card-img-top" alt="..." />
             <div className="card-body">
                 <h5 className="card-title">{title}</h5>
                 <p id="newDescription" className="card-text">{description}</p>
